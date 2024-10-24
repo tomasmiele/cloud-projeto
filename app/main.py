@@ -33,6 +33,10 @@ class CriarUsuario(BaseModel):
     email: str
     senha: str
 
+class LogarUsuario(BaseModel):
+    email: str
+    senha: str
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -46,6 +50,9 @@ def get_db():
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
+
+def verify_password(login_password: str, user_password) -> bool:
+    return pwd_context.verify(login_password, user_password)
 
 def create_access_token(data: dict):
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
@@ -66,6 +73,26 @@ def create_usuario(usuario: CriarUsuario, db: Session = Depends(get_db)):
     db.refresh(novo_usuario)
     
     token_data = {"sub": novo_usuario.email}
+    jwt_token = create_access_token(token_data)
+    
+    return {"jwt": jwt_token}
+
+@app.post("/login")
+def login_usuario(usuario: LogarUsuario, db: Session = Depends(get_db)):
+    usuario_existente = db.query(Usuario).filter(Usuario.email == usuario.email).first()
+    if not usuario_existente:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email não registrado."
+        )
+
+    if verify_password(usuario.senha, usuario_existente.senha) == False:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Senha incorreta."
+        )
+
+    token_data = {"sub": usuario.email}
     jwt_token = create_access_token(token_data)
     
     return {"jwt": jwt_token}
