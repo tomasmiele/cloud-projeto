@@ -9,7 +9,7 @@ com a implementação de 3 endpoints. O primeiro sendo
 o registro de um novo usuário, o segundo o login deste
 usuário e por fim uma consulta sobre as últimas atualizações de uma ação de sua escolha, caso não seja
 passada nenhuma ação o endpoint coletará essas informações
-sobre a ação da Apple (AAPL)
+sobre a ação da Apple (AAPL).
 
 ## Explicação de Como Executar a Aplicação
 
@@ -114,6 +114,13 @@ Consulta as informações diárias de uma ação especificada. Retorna os dados 
 > ```
 
 ![200 consultar](img/200_consultar.png)
+
+203 Forbidden: Token não autenticado.
+>``` json
+>{"detail": "Not authenticated"}
+>```
+
+![203 consultar](img/203_consultar.png)
 
 204 No Content: Ação não encontrada.
 > ``` json
