@@ -1,12 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from passlib.context import CryptContext
 import jwt
+from jwt import PyJWTError
 import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 load_dotenv()
 
@@ -17,6 +19,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+security = HTTPBearer()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = "HS256"
@@ -57,6 +61,32 @@ def verify_password(login_password: str, user_password) -> bool:
 def create_access_token(data: dict):
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
+def verify_user_from_token(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> bool:
+    token = credentials.credentials
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Token inválido.",
+            )
+
+        usuario_existente = db.query(Usuario).filter(Usuario.email == email).first()
+        if not usuario_existente:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Token inválido.",
+            )
+        return True
+
+    except jwt.PyJWTError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Token inválido.",
+        )
+
 @app.post("/registrar")
 def create_usuario(usuario: CriarUsuario, db: Session = Depends(get_db)):
     usuario_existente = db.query(Usuario).filter(Usuario.email == usuario.email).first()
@@ -96,3 +126,7 @@ def login_usuario(usuario: LogarUsuario, db: Session = Depends(get_db)):
     jwt_token = create_access_token(token_data)
     
     return {"jwt": jwt_token}
+
+@app.get("/consultar")
+def consultar(acao: str, usuario_valido: bool = Depends(verify_user_from_token)):
+    return {"status": "Acesso permitido"}
