@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Request
+from fastapi import FastAPI, Depends, HTTPException, status, Request, Query
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
@@ -129,7 +129,7 @@ def login_usuario(usuario: LogarUsuario, db: Session = Depends(get_db)):
     return {"jwt": jwt_token}
 
 @app.get("/consultar")
-def consultar(acao: str, usuario_valido: bool = Depends(verify_user_from_token)):
+def consultar(acao: str = Query("AAPL", description="Símbolo da ação a ser consultada"), usuario_valido: bool = Depends(verify_user_from_token)):
     ts = TimeSeries(key=os.getenv('API_KEY'), output_format='pandas')
     try:
         data, _ = ts.get_daily(acao)
