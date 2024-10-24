@@ -9,6 +9,7 @@ import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from alpha_vantage.timeseries import TimeSeries
 
 load_dotenv()
 
@@ -129,4 +130,14 @@ def login_usuario(usuario: LogarUsuario, db: Session = Depends(get_db)):
 
 @app.get("/consultar")
 def consultar(acao: str, usuario_valido: bool = Depends(verify_user_from_token)):
-    return {"status": "Acesso permitido"}
+    ts = TimeSeries(key=os.getenv('API_KEY'), output_format='pandas')
+    try:
+        data, _ = ts.get_daily(acao)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_204_NO_CONTENT,
+            detail="Não existe essa ação."
+        )
+    data_last_5_days = data.head(5)
+    data_dict = data_last_5_days.to_dict()
+    return {f"Informações dos últimos 5 dias da Ação: {acao}": data_dict}
