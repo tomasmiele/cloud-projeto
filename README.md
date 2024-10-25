@@ -46,11 +46,40 @@ Para acessá-los entre em um browser, como o Google Chrome, e coloque esse link:
 Pronto! A aplicação está pronta para uso.
 
 ### Baixando apenas o Compose:
-1. Baixe o arquivo compose.yaml
+1. Crie o arquivo compose
 
-(Sugestão: antes de baixar o arquivo entre no diretório do Downloads ou Desktop)
+(Sugestão: antes de criar o arquivo entre no diretório do Downloads ou Desktop)
 
-<a href="files/compose.yaml" download>Baixar Compose</a>
+Crie um arquivo chamado docker-compose.yalm ou compose.yalm e cole o conteúdo a sequir nele.
+
+> ```
+>services:
+>  db:
+>    image: postgres:15
+>    container_name: postgres_container
+>    environment:
+>      - POSTGRES_USER=${POSTGRES_USER:-projeto}
+>      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-projeto}
+>      - POSTGRES_DB=${POSTGRES_DB:-projeto}
+>    ports:
+>      - "5432:5432"
+>
+>  app:
+>    image: tomasmiele/cloud-projeto:latest
+>    container_name: fastapi_app
+>    environment:
+>      - POSTGRES_USER=${POSTGRES_USER:-projeto}
+>      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-projeto}
+>      - POSTGRES_DB=${POSTGRES_DB:-projeto}
+>      - DB_HOST=db
+>      - DB_PORT=5432
+>      - SECRET_KEY=${SECRET_KEY}
+>      - API_KEY=${API_KEY:-H456ZLCOCHH7CH10}
+>    ports:
+>      - "8000:8000"
+>    depends_on:
+>      - db
+> ```
 
 2. Rodar a aplicação:
 
@@ -197,11 +226,10 @@ Exemplo de Requisição
 https://hub.docker.com/repository/docker/tomasmiele/cloud-projeto/general
 
 ## Código do docker-compose.yaml
-### Download:
-
-<a href="files/compose.yaml" download>Baixar Compose</a>
-
 ### Copiar Arquivo:
+
+Crie um arquivo chamado docker-compose.yalm ou compose.yalm e cole o conteúdo a sequir nele.
+
 > ```
 >services:
 >  db:
