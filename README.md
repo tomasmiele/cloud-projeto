@@ -101,7 +101,7 @@ Pronto! A aplicação está pronta para uso.
 
 ## Documentação dos Endpoints 
 ### POST: "/registrar"
-Cria um novo usuário no sistema. Gera um token JWT para o usuário registrado.
+Essa rota é encarregada de criar um novo usuário no sistema. O retorno esperado é um token JWT para o usuário registrado.
 
 #### Parâmetros de entrada:
 
@@ -110,6 +110,16 @@ Cria um novo usuário no sistema. Gera um token JWT para o usuário registrado.
 - senha (string): Senha do usuário. (Obrigatório)
 
 ![Param registrar](img/param_registrar.png)
+
+#### Exemplo de Requisição
+
+> ```json
+> {
+>  "nome": "Humberto Sandmann",
+>   "email": "humberto@example.com",
+>   "senha": "senha123"
+> }
+> ```
 
 #### Respostas:
 
@@ -125,18 +135,8 @@ Cria um novo usuário no sistema. Gera um token JWT para o usuário registrado.
 > ```
 ![409 registrar](img/409_registrar.png)
 
-#### Exemplo de Requisição
-
-> ```json
-> {
->  "nome": "Humbeerto Sandmann",
->   "email": "humberto@example.com",
->   "senha": "senha123"
-> }
-> ```
-
 ### POST: "/login"
-Autentica o usuário com email e senha. Gera um token JWT para o usuário autenticado.
+Aqui o objetivo é testar se um usuário já está cadastrado, para isso esse endpoint autentica o usuário com email e senha. Caso esteja cadastrado, será gerado o mesmo token JWT quando criado o usuário.
 
 #### Parâmetros de entrada:
 
@@ -144,6 +144,15 @@ Autentica o usuário com email e senha. Gera um token JWT para o usuário autent
 - senha (string): Senha do usuário. (Obrigatório)
 
 ![Param login](img/param_login.png)
+
+#### Exemplo de Requisição
+
+> ```json
+> {
+>   "email": "humberto@example.com",
+>   "senha": "senha123"
+> }
+> ```
 
 #### Respostas:
 
@@ -165,17 +174,8 @@ ou
 > ```
 ![401 login](img/401_login_senha.png)
 
-#### Exemplo de Requisição
-
-> ```json
-> {
->   "email": "humberto@example.com",
->   "senha": "senha123"
-> }
-> ```
-
 ### GET: "/consultar"
-Consulta as informações diárias de uma ação especificada. Retorna os dados dos últimos 5 dias.
+O objetivo aqui é validar se o usuário já foi cadastrado, para isso no header é passado o token gerado ao cadastrado. Além disso há uma consulta a respeito de informações diárias de uma ação especificada (caso nenhuma ação seja passada a opção padrão é a AAPL) retornando os dados dos últimos 5 dias.
 
 #### Parâmetros de entrada:
 
@@ -183,6 +183,15 @@ Consulta as informações diárias de uma ação especificada. Retorna os dados 
 - Autenticação: O usuário precisa estar autenticado com um token JWT válido.
 
 ![Endpoint consultar](img/endpoint_consultar.png)
+
+Exemplo de Requisição
+> ```bash
+>GET /consultar?acao=AAPL
+> ```
+
+> ```json
+> {"acao": "AAPL"}
+> ```
 
 #### Respostas:
 
@@ -214,11 +223,6 @@ Consulta as informações diárias de uma ação especificada. Retorna os dados 
 > ```
 
 ![204 consultar](img/204_consultar.png)
-
-Exemplo de Requisição
-> ```bash
->GET /consultar?acao=AAPL
-> ```
 
 ## Vídeo de Execução da Aplicação
 
