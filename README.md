@@ -16,7 +16,7 @@ sobre a ação da Apple (AAPL).
 ### Baixando o repositório:
 1. Clone o repositório:  
 
-Copie o linke a baixo e cole-o no terminal de seu computador e execute o comando. (Sugestão: antes de clonar o repositório entre no diretório do Downloads ou Desktop)
+Copie o linke a baixo e cole-o no terminal de seu computador e execute o comando. (Sugestão: antes de clonar o repositório entre no diretório do Downloads ou Desktop).
 >https://github.com/tomasmiele/cloud-projeto.git
 
 2. Entre no repositório:  
@@ -29,7 +29,7 @@ Para isso, ainda no terminal execute o comando:
 
 3. Rodar a aplicação:
 
-Para isso execute no terminal, dentro da pasta que acabamos de entrar, o comando:
+Abra o aplicativo do Docker e deixe-o rodando, feito isso execute no terminal, dentro da pasta que acabamos de entrar, o comando:
 
 >```bash
 >docker compose up 
@@ -37,7 +37,32 @@ Para isso execute no terminal, dentro da pasta que acabamos de entrar, o comando
 
 4. Teste dos endpoints:
 
-Mais adiante expliccarei detalhadamente cada endpoint, ou seja, o que você deve passar como parâmetro para eles e o que esperar como retorno.
+Mais adiante explicarei detalhadamente cada endpoint, ou seja, o que você deve passar como parâmetro para eles e o que esperar como retorno.
+
+Para acessá-los entre em um browser, como o Google Chrome, e coloque esse link:
+
+>http://localhost:8000/docs
+
+Pronto! A aplicação está pronta para uso.
+
+### Baixando apenas o Compose:
+1. Baixe o arquivo compose.yaml
+
+(Sugestão: antes de baixar o arquivo entre no diretório do Downloads ou Desktop)
+
+<a href="files/compose.yaml" download>Baixar Compose</a>
+
+2. Rodar a aplicação:
+
+Abra o aplicativo do Docker e deixe-o rodando, feito isso abra o terminal da sua máquina (caso tenha clonado em uma pasta específica entre nela) e execute o comando:
+
+>```bash
+>docker compose up 
+>```
+
+3. Teste dos endpoints:
+
+Como dito, mais adiante explicarei detalhadamente cada endpoint, ou seja, o que você deve passar como parâmetro para eles e o que esperar como retorno.
 
 Para acessá-los entre em um browser, como o Google Chrome, e coloque esse link:
 
@@ -174,7 +199,7 @@ https://hub.docker.com/repository/docker/tomasmiele/cloud-projeto/general
 ## Código do docker-compose.yaml
 ### Download:
 
-[Baixar Compose](files/compose.yaml)
+<a href="files/compose.yaml" download>Baixar Compose</a>
 
 ### Copiar Arquivo:
 > ```
