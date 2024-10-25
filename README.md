@@ -1,6 +1,6 @@
 # Projeto de cloud
 
-## Nome:
+## Autor do repositório:
 Tomas Rolim Miele
 
 ## Explicação do Projeto
@@ -12,6 +12,38 @@ passada nenhuma ação o endpoint coletará essas informações
 sobre a ação da Apple (AAPL).
 
 ## Explicação de Como Executar a Aplicação
+
+### Baixando o repositório:
+1. Clone o repositório:  
+
+Copie o linke a baixo e cole-o no terminal de seu computador e execute o comando. (Sugestão: antes de clonar o repositório entre no diretório do Downloads ou Desktop)
+>https://github.com/tomasmiele/cloud-projeto.git
+
+2. Entre no repositório:  
+
+Para isso, ainda no terminal execute o comando:
+
+>```bash
+>cd cloud-projeto
+>```
+
+3. Rodar a aplicação:
+
+Para isso execute no terminal, dentro da pasta que acabamos de entrar, o comando:
+
+>```bash
+>docker compose up 
+>```
+
+4. Teste dos endpoints:
+
+Mais adiante expliccarei detalhadamente cada endpoint, ou seja, o que você deve passar como parâmetro para eles e o que esperar como retorno.
+
+Para acessá-los entre em um browser, como o Google Chrome, e coloque esse link:
+
+>http://localhost:8000/docs
+
+Pronto! A aplicação está pronta para uso.
 
 ## Documentação dos Endpoints 
 ### POST: "/registrar"
@@ -140,6 +172,11 @@ Exemplo de Requisição
 https://hub.docker.com/repository/docker/tomasmiele/cloud-projeto/general
 
 ## Código do docker-compose.yaml
+### Download:
+
+[Baixar Compose](files/compose.yaml)
+
+### Copiar Arquivo:
 > ```
 >services:
 >  db:
