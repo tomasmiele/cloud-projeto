@@ -5,14 +5,14 @@ FROM python:3.12
 WORKDIR /app
 
 # Copia os arquivos de dependências e instala as dependências
-COPY requirements.txt .
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o restante do código para o container
-COPY app .
+COPY app/ /app/
 
 # Exponha a porta onde o FastAPI rodará
 EXPOSE 8000
 
 # Comando para iniciar a aplicação FastAPI
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

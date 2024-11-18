@@ -264,3 +264,177 @@ Crie um arquivo chamado docker-compose.yalm ou compose.yalm e cole o conteúdo a
 >    depends_on:
 >      - db
 > ```
+
+## Deploy na AWS
+
+Os requisitos para a realização desse deploy eram:
+
+1. "[...] A implantação deve ser feita utilizando o Elastic Kubernetes Service (EKS). A aplicação deve ser implantada em um cluster EKS."
+2. "Você deve subir um cluster EKS e implantar dois PODs, sendo um da aplicação e outro do banco de dados. A aplicação deve ser capaz de se conectar ao banco de dados e realizar as operações de endpoints da API acima descritas."
+
+### Acesso na conta AWS
+Após entrar na sua conta AWS acessaremos o CloudShell para a realização de um deploy rápido e prático. Essa ferramenta pode ser achada através da "Search Engine" ou clicando no botão da foto abixo.
+
+![CloudShell](img/CloudShell.png)
+
+Para saber mais do CloudShell: [Saiba mais](https://docs.aws.amazon.com/pt_br/cloudshell/latest/userguide/welcome.html)
+
+### Por que usar o CloudShell?
+
+Essa ferramenta já possui o AWS CLI e o EKSCTL instalados, o que facilitará o processo de deploy da nossa aplicação
+
+### 1. Criação do cluster EKS
+
+>```bash
+>eksctl create cluster --name {NOME DO SEU PROJETO} --region {REGIÃO DE INTERESSE} --nodes 2
+>```
+
+Note: aqui usaremos 2 nós, porém dependendo da sua aplicação esse valor por variar. Para a região, escolha a mais adequada para sua aplicação
+
+### 2. Configuração do kubectl
+
+>```bash
+>aws eks --region {REGIÃO DE INTERESSE} update-kubeconfig --name {NOME DO SEU PROJETO}
+>```
+
+### 3. Criação do arquivo do banco de dados
+
+>```bash
+>nano nome-do-arquivo.yml
+>```
+
+Configure o arquivo conforme o suas especificidades, no caso desse tutoria será:
+
+>```
+>apiVersion: apps/v1
+>kind: Deployment
+>metadata:
+>  name: postgres-db-cloud
+>spec:
+>  replicas: 1
+>  selector:
+>    matchLabels:
+>      app: postgres
+>  template:
+>    metadata:
+>      labels:
+>        app: postgres
+>    spec:
+>      containers:
+>        - name: postgres
+>          image: postgres:15
+>          ports:
+>            - containerPort: 5432
+>          env:
+>            - name: POSTGRES_USER
+>              value: "projeto"
+>            - name: POSTGRES_PASSWORD
+>              value: "projeto"
+>            - name: POSTGRES_DB
+>              value: "projeto"
+>---
+>apiVersion: v1
+>kind: Service
+>metadata:
+>  name: postgres
+>spec:
+>  ports:
+>    - port: 5432
+>  selector:
+>    app: postgres
+>```
+
+Para realizar o deploy execute o comando abaixo:
+
+>```bash
+>kubectl apply -f nopme-do-arquivo.yml
+>```
+
+Para verificar o pod rodando execute:
+
+>```bash
+>kubectl get pods
+>```
+
+### 4. Criação do arquivo app
+
+Essa parte será uma duplicata da parte anterior porém para aplicação
+
+>```bash
+>nano nome-do-arquivo.yml
+>```
+
+>```
+>apiVersion: apps/v1
+>kind: Deployment
+>metadata:
+>  name: fastapi-app
+>spec:
+>  replicas: 1
+>  selector:
+>    matchLabels:
+>      app: fastapi
+>  template:
+>    metadata:
+>      labels:
+>        app: fastapi
+>    spec:
+>      containers:
+>        - name: fastapi
+>          image: tomasmiele/cloud-projeto:latest
+>          ports:
+>            - containerPort: 8000
+>          env:
+>            - name: DATABASE_URL
+>              value: "postgresql://projeto:projeto@postgres:5432/projeto"
+>            - name: SECRET_KEY
+>              value: "581fc9c4fdda675143cfd3d2d65b1ceeec42f4e1e1be182fe26d7f32961eb223cfdc4c6da159e4e8c48c86e419763e7597af855f179df92416241c47e5083f5c476b46e3efd26ea1491f723f555370b9dc62c8f532559759c7345dd93b2ecd67f5b21ec1af42f7f32e3f4283d3ca2e0e2e155159cc7ba8fb5cccfdff217c3f31b7832ad4952f5e2c747954cc91111772a04bb7bed7a5a149b88632b8314dfae1dd01c33c75d084d2ebcbd1b54fcd9a8a0102eb27d58ae65c4573402dff168f01960ef6dc7be7eedb95d5b28f3b35461b5662a243d487b0ef818a01d00d83e7e8753c59c3ba163cbe85774f4c70af4269d0829c06d603e1f89d4e333be4768f24"
+>            - name: API_KEY
+>              value: "H456ZLCOCHH7CH10"
+>---
+>apiVersion: v1
+>kind: Service
+>metadata:
+>  name: fastapi-service
+>spec:
+>  type: LoadBalancer
+>  ports:
+>    - port: 80
+>      targetPort: 8000
+>  selector:
+>    app: fastapi
+>```
+
+Para realizar o deploy execute o comando abaixo:
+
+>```bash
+>kubectl apply -f nopme-do-arquivo.yml
+>```
+
+Para verificar o pod rodando execute:
+
+>```bash
+>kubectl get pods
+>```
+
+### 5. Acesse sua aplicação:
+
+Execute o comando abaixo para listar os serviços disponíveis no cluster e obter o **EXTERNAL-IP**:
+
+>```bash
+>kubectl get svc fastapi-service
+>```
+
+EXTERNAL-IP: Este é o IP público da aplicação. Use-o para acessá-la.
+
+Caso o campo EXTERNAL-IP apareça como <pending>, aguarde alguns minutos até que o LoadBalancer seja provisionado.
+
+Para testar a aplicação:
+
+Acesse um navegador e copie o EXTERNAL-IP da saída do comando anterior.
+A barra de pesquisa será parecida com:
+
+>```
+>http://<EXTERNAL-IP>
+>```
+
