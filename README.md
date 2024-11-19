@@ -281,7 +281,15 @@ Para saber mais do CloudShell: [Saiba mais](https://docs.aws.amazon.com/pt_br/cl
 
 ### Por que usar o CloudShell?
 
-Essa ferramenta já possui o AWS CLI e o EKSCTL instalados, o que facilitará o processo de deploy da nossa aplicação
+Essa ferramenta já possui o AWS CLI e o EKSCTL instalados, o que facilitará o processo de deploy da nossa aplicação.
+
+Caso o EKSCTL não esteja baixado, rode esse comando:
+
+>```bash
+>curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+>
+>sudo mv /tmp/eksctl /usr/local/bin
+>```
 
 ### 1. Criação do cluster EKS
 
@@ -305,11 +313,13 @@ Note: aqui usaremos 2 nós, porém dependendo da sua aplicação esse valor por 
 
 Configure o arquivo conforme o suas especificidades, no caso desse tutoria será:
 
+Nota: A parte "env" poderá ser diferente na sua aplicação
+
 >```
 >apiVersion: apps/v1
 >kind: Deployment
 >metadata:
->  name: postgres-db-cloud
+>  name: postgres
 >spec:
 >  replicas: 1
 >  selector:
@@ -322,21 +332,21 @@ Configure o arquivo conforme o suas especificidades, no caso desse tutoria será
 >    spec:
 >      containers:
 >        - name: postgres
->          image: postgres:15
+>          image: postgres
 >          ports:
 >            - containerPort: 5432
 >          env:
 >            - name: POSTGRES_USER
->              value: "projeto"
+>              value: projeto
 >            - name: POSTGRES_PASSWORD
->              value: "projeto"
+>              value: projeto
 >            - name: POSTGRES_DB
->              value: "projeto"
+>              value: projeto
 >---
 >apiVersion: v1
 >kind: Service
 >metadata:
->  name: postgres
+>  name: db
 >spec:
 >  ports:
 >    - port: 5432
@@ -364,11 +374,13 @@ Essa parte será uma duplicata da parte anterior porém para aplicação
 >nano nome-do-arquivo.yml
 >```
 
+Nota: A parte "env" poderá ser diferente na sua aplicação
+
 >```
 >apiVersion: apps/v1
 >kind: Deployment
 >metadata:
->  name: fastapi-app
+>  name: fastapi
 >spec:
 >  replicas: 1
 >  selector:
@@ -385,12 +397,20 @@ Essa parte será uma duplicata da parte anterior porém para aplicação
 >          ports:
 >            - containerPort: 8000
 >          env:
->            - name: DATABASE_URL
->              value: "postgresql://projeto:projeto@postgres:5432/projeto"
+>            - name: POSTGRES_USER
+>              value: projeto
+>            - name: POSTGRES_PASSWORD
+>              value: projeto
+>            - name: POSTGRES_DB
+>              value: projeto
+>            - name: DB_HOST
+>              value: db // nota: esse nome deve ser igual ao nome específicado no arquivo anterior
+>            - name: DB_PORT
+>              value: "5432"
 >            - name: SECRET_KEY
->              value: "581fc9c4fdda675143cfd3d2d65b1ceeec42f4e1e1be182fe26d7f32961eb223cfdc4c6da159e4e8c48c86e419763e7597af855f179df92416241c47e5083f5c476b46e3efd26ea1491f723f555370b9dc62c8f532559759c7345dd93b2ecd67f5b21ec1af42f7f32e3f4283d3ca2e0e2e155159cc7ba8fb5cccfdff217c3f31b7832ad4952f5e2c747954cc91111772a04bb7bed7a5a149b88632b8314dfae1dd01c33c75d084d2ebcbd1b54fcd9a8a0102eb27d58ae65c4573402dff168f01960ef6dc7be7eedb95d5b28f3b35461b5662a243d487b0ef818a01d00d83e7e8753c59c3ba163cbe85774f4c70af4269d0829c06d603e1f89d4e333be4768f24"
+>              value: 581fc9c4fdda675143cfd3d2d65b1ceeec42f4e1e1be182fe26d7f32961eb223cfdc4c6da159e4e8c48c86e419763e7597af855f179df92416241c47e5083f5c476b46e3efd26ea1491f723f555370b9dc62c8f532559759c7345dd93b2ecd67f5b21ec1af42f7f32e3f4283d3ca2e0e2e155159cc7ba8fb5cccfdff217c3f31b7832ad4952f5e2c747954cc91111772a04bb7bed7a5a149b88632b8314dfae1dd01c33c75d084d2ebcbd1b54fcd9a8a0102eb27d58ae65c4573402dff168f01960ef6dc7be7eedb95d5b28f3b35461b5662a243d487b0ef818a01d00d83e7e8753c59c3ba163cbe85774f4c70af4269d0829c06d603e1f89d4e333be4768f24
 >            - name: API_KEY
->              value: "H456ZLCOCHH7CH10"
+>              value: H456ZLCOCHH7CH10
 >---
 >apiVersion: v1
 >kind: Service
@@ -422,7 +442,7 @@ Para verificar o pod rodando execute:
 Execute o comando abaixo para listar os serviços disponíveis no cluster e obter o **EXTERNAL-IP**:
 
 >```bash
->kubectl get svc fastapi-service
+>kubectl get svc
 >```
 
 EXTERNAL-IP: Este é o IP público da aplicação. Use-o para acessá-la.
@@ -438,3 +458,13 @@ A barra de pesquisa será parecida com:
 >http://<EXTERNAL-IP>
 >```
 
+No caso dessa aplicação para visualizarmos o que podemos fazer adicionei um "/docs" para entrar no Swagger e obtive essa resposta:
+
+![EXTERNAL-IP-URL](img/EXTERNAL-IP-URL.png)
+
+### [Extra] Comandos Úteis
+
+-  kubectl logs {nome do pod}
+- kubectl rollout restart deployment {nome de uma das aplicações}
+- kubectl delete deployment {nome de uma das aplicações}
+- kubectl describe pod {nome do pod}
