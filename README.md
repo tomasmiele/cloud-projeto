@@ -462,6 +462,10 @@ No caso dessa aplicação para visualizarmos o que podemos fazer adicionei um "/
 
 ![EXTERNAL-IP-URL](img/EXTERNAL-IP-URL.png)
 
+### Vídeo de Explicação AWS
+
+[Vídeo AWS](https://youtu.be/x4VTtcPKWTw)
+
 ### [Extra] Comandos Úteis
 
 -  kubectl logs {nome do pod}
