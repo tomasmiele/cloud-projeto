@@ -18,8 +18,20 @@ spec:
           ports:
             - containerPort: 8000
           env:
-            - name: DATABASE_URL
-              value: postgresql://postgres:postgres@postgres:5432/ProjetoCloud
+            - name: POSTGRES_USER
+              value: projeto
+            - name: POSTGRES_PASSWORD
+              value: projeto
+            - name: POSTGRES_DB
+              value: projeto
+            - name: DB_HOST
+              value: db
+            - name: DB_PORT
+              value: "5432"
+            - name: SECRET_KEY
+              value: 581fc9c4fdda675143cfd3d2d65b1ceeec42f4e1e1be182fe26d7f32961eb223cfdc4c6da159e4e8c48c86e419763e7597af855f179df92416241c47e5083f5c476b46e3efd26ea1491f723f555370b9dc62c8f532559759c7345dd93b2ecd67f5b21ec1af42f7f32e3f4283d3ca2e0e2e155159cc7ba8fb5cccfdff217c3f31b7832ad4952f5e2c747954cc91111772a04bb7bed7a5a149b88632b8314dfae1dd01c33c75d084d2ebcbd1b54fcd9a8a0102eb27d58ae65c4573402dff168f01960ef6dc7be7eedb95d5b28f3b35461b5662a243d487b0ef818a01d00d83e7e8753c59c3ba163cbe85774f4c70af4269d0829c06d603e1f89d4e333be4768f24
+            - name: API_KEY
+              value: H456ZLCOCHH7CH10
 ---
 apiVersion: v1
 kind: Service

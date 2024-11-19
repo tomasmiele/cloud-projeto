@@ -19,16 +19,16 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_USER
-              value: postgres
+              value: projeto
             - name: POSTGRES_PASSWORD
-              value: postgres
+              value: projeto
             - name: POSTGRES_DB
-              value: ProjetoCloud
+              value: projeto
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: db
 spec:
   ports:
     - port: 5432
