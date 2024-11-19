@@ -5,11 +5,11 @@ FROM python:3.12
 WORKDIR /app
 
 # Copia os arquivos de dependências e instala as dependências
-COPY requirements.txt /app/
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o restante do código para o container
-COPY app/ /app/
+COPY app .
 
 # Exponha a porta onde o FastAPI rodará
 EXPOSE 8000
